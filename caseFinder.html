@@ -165,6 +165,10 @@
         $(document).ready(function(){
             sendHeightToParent(initialHeight);
         })
+
+        setInterval(function(){
+            window.parent.postMessage({ 'bodyHeight': "Hello" });
+        }, 1000)
     </script>
 
 </html>
