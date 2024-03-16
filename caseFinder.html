@@ -162,7 +162,9 @@
 
         // Start monitoring body height
         monitorBodyHeight();
-        sendHeightToParent(initialHeight);
+        $(document).ready(function(){
+            sendHeightToParent(initialHeight);
+        })
     </script>
 
 </html>
