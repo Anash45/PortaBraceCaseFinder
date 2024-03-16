@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PortaBrace</title>
+        <link rel="stylesheet" href="./style.css">
+    </head>
+
+    <body>
+        <main>
+            <h2 class="search-title">PortaBrace Case Finder</h2>
+            <section class="main-section">
+                <h3 class="form-title">Enter minimum dimension requirements.</h3>
+                <div class="sec-flex">
+                    <div class="form-div">
+                        <form method="post" action="" id="filterForm">
+                            <div class="fields-flex">
+                                <div class="field">
+                                    <label for="length">L:</label>
+                                    <input type="text" pattern="[0-9.]{1,}" title="Only enter measurements in numbers."
+                                        required name="length" id="length" class="inp">
+                                </div>
+                                <div class="field">
+                                    <label for="width">W:</label>
+                                    <input type="text" pattern="[0-9.]{1,}" title="Only enter measurements in numbers."
+                                        required name="width" id="width" class="inp">
+                                </div>
+                                <div class="field">
+                                    <label for="height">H:</label>
+                                    <input type="text" pattern="[0-9.]{1,}" title="Only enter measurements in numbers."
+                                        required name="height" id="height" class="inp">
+                                </div>
+                            </div>
+                            <div class="fields-flex">
+                                <div class="field">
+                                    <input type="radio" name="unit" id="inches" value="inches" class="inp" checked>
+                                    <label for="inches">Inches</label>
+                                </div>
+                                <div class="field">
+                                    <input type="radio" name="unit" id="centimeters" value="centimeters" class="inp">
+                                    <label for="centimeters">Centimeters</label>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="info-div">
+                        <img src="./img/info-img.jpg" alt="Case Image">
+                    </div>
+                </div>
+                <div class="items" id="items">
+                </div>
+            </section>
+        </main>
+    </body>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to filter rows
+            function filterRows(data, length, width, height) {
+                return data.filter(function (row) {
+                    return parseFloat(row.Length) >= parseFloat(length) &&
+                        parseFloat(row.Width) >= parseFloat(width) &&
+                        parseFloat(row.Height) >= parseFloat(height);
+                });
+            }
+
+            // Event handler for form submission
+            $('#filterForm').submit(function (event) {
+                event.preventDefault();
+
+                var csvLength = parseFloat($('#length').val());
+                var csvWidth = parseFloat($('#width').val());
+                var csvHeight = parseFloat($('#height').val());
+                var units = $('input[name="unit"]:checked').val();
+
+                // Read CSV file
+                $.ajax({
+                    url: 'Dim-Search-File.csv',
+                    dataType: 'text',
+                    success: function (csvData) {
+                        var lines = csvData.split("\n");
+                        var headers = lines[0].split(",");
+                        var result = [];
+
+                        console.log(csvData);
+                        // Parse CSV data
+                        for (var i = 1; i < lines.length; i++) {
+                            var obj = {};
+                            var currentline = lines[i].split(",");
+                            if (currentline.length === headers.length) { // Check if the number of elements matches the headers
+                                for (var j = 0; j < headers.length; j++) {
+                                    obj[headers[j].trim()] = currentline[j] ? currentline[j].trim() : ''; // Use ternary operator to check if currentline[j] exists
+                                }
+                                result.push(obj);
+                            }
+                        }
+
+
+                        // Check the units
+                        if (units == 'centimeters') {
+                            csvLength = csvLength / 2.54;
+                            csvHeight = csvHeight / 2.54;
+                            csvWidth = csvWidth / 2.54;
+                        }
+
+                        console.log(units, csvLength, csvHeight, csvWidth);
+                        let items = '';
+                        // Filter rows based on dimensions
+                        var filteredRows = filterRows(result, csvLength, csvWidth, csvHeight);
+                        if (filteredRows.length > 0) {
+                            filteredRows.forEach(function (row) {
+                                //<img src="./img/info-img.jpg" alt="Item Image" class="item-img">
+                                items += `<div class="item">
+                                    <a href="${row.URL}" class="item-box">
+                                        <h3 class="item-name">${row.SKU}</h3>
+                                    </a>
+                                </div>`;
+                            })
+                        } else {
+                            items = '<h3 class="no-result">No cases found for your dimensions.</h3>';
+                        }
+
+                        $('#items').html(items);
+                        console.log(filteredRows);
+                        // Do something with filteredRows, like displaying them on the page
+                    }
+                });
+            });
+        });
+        // Function to get the current height of the body
+        function getBodyHeight() {
+            return document.body.clientHeight; // Get the client height of the body
+        }
+
+        var initialHeight = getBodyHeight(); // Get the initial height
+        // Function to continuously monitor changes in body height
+        function monitorBodyHeight() {
+            var currentHeight = getBodyHeight(); // Get the initial height
+
+            // Check for height changes at regular intervals
+            setInterval(function () {
+                var newHeight = getBodyHeight(); // Get the new height
+
+                // If the height has changed, send the new height to the parent window
+                if (newHeight !== currentHeight) {
+                    currentHeight = newHeight; // Update the current height
+                    sendHeightToParent(currentHeight); // Send the height to the parent window
+                }
+            }, 100); // Adjust the interval as needed
+        }
+
+        // Function to send the body height to the parent window using postMessage
+        function sendHeightToParent(height) {
+            window.parent.postMessage({ 'bodyHeight': height });
+        }
+
+        // Start monitoring body height
+        monitorBodyHeight();
+        sendHeightToParent(initialHeight);
+    </script>
+
+</html>
