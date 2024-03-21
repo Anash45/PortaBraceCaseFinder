@@ -63,12 +63,24 @@
         $(document).ready(function () {
             // Function to filter rows
             function filterRows(data, length, width, height) {
-                return data.filter(function (row) {
+                // Calculate volume for each item
+                data.forEach(function(row) {
+                    row.volume = parseFloat(row.Length) * parseFloat(row.Width) * parseFloat(row.Height);
+                });
+            
+                // Sort the data based on volume in ascending order
+                data.sort(function(a, b) {
+                    return a.volume - b.volume;
+                });
+            
+                // Filter rows based on given dimensions
+                return data.filter(function(row) {
                     return parseFloat(row.Length) >= parseFloat(length) &&
                         parseFloat(row.Width) >= parseFloat(width) &&
                         parseFloat(row.Height) >= parseFloat(height);
                 });
             }
+            
 
             // Event handler for form submission
             $('#filterForm').submit(function (event) {
@@ -112,6 +124,7 @@
                         console.log(units, csvLength, csvHeight, csvWidth);
                         let items = '';
                         // Filter rows based on dimensions
+                        //<p>${row.Length} x ${row.Width} x ${row.Height}</p>
                         var filteredRows = filterRows(result, csvLength, csvWidth, csvHeight);
                         if (filteredRows.length > 0) {
                             filteredRows.forEach(function (row) {
