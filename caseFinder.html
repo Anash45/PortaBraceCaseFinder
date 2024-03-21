@@ -81,7 +81,7 @@
 
                 // Read CSV file
                 $.ajax({
-                    url: 'Dim-Search-File.csv',
+                    url: 'Dim-Search-with-Images.csv',
                     dataType: 'text',
                     success: function (csvData) {
                         var lines = csvData.split("\n");
@@ -115,10 +115,10 @@
                         var filteredRows = filterRows(result, csvLength, csvWidth, csvHeight);
                         if (filteredRows.length > 0) {
                             filteredRows.forEach(function (row) {
-                                //<img src="./img/info-img.jpg" alt="Item Image" class="item-img">
                                 items += `<div class="item">
                                     <a href="${row.URL}" class="item-box">
                                         <h3 class="item-name">${row.SKU}</h3>
+                                        <img src="${row.Image}" alt="Item Image" class="item-img">
                                     </a>
                                 </div>`;
                             })
