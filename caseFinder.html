@@ -64,23 +64,27 @@
             // Function to filter rows
             function filterRows(data, length, width, height) {
                 // Calculate volume for each item
-                data.forEach(function(row) {
+                data.forEach(function (row) {
                     row.volume = parseFloat(row.Length) * parseFloat(row.Width) * parseFloat(row.Height);
                 });
-            
+
                 // Sort the data based on volume in ascending order
-                data.sort(function(a, b) {
+                data.sort(function (a, b) {
                     return a.volume - b.volume;
                 });
-            
+
                 // Filter rows based on given dimensions
-                return data.filter(function(row) {
+                return data.filter(function (row) {
                     return parseFloat(row.Length) >= parseFloat(length) &&
                         parseFloat(row.Width) >= parseFloat(width) &&
                         parseFloat(row.Height) >= parseFloat(height);
                 });
             }
-            
+
+            function navigateWindow(url) {
+                console.log(url);
+                window.parent.postMessage({ 'URL': url });
+            }
 
             // Event handler for form submission
             $('#filterForm').submit(function (event) {
@@ -129,7 +133,7 @@
                         if (filteredRows.length > 0) {
                             filteredRows.forEach(function (row) {
                                 items += `<div class="item">
-                                    <a href="${row.URL}" class="item-box">
+                                    <a class="item-box" href="${row.URL}" target="_parent">
                                         <h3 class="item-name">${row.SKU}</h3>
                                         <img src="${row.Image}" alt="Item Image" class="item-img">
                                     </a>
@@ -175,13 +179,14 @@
 
         // Start monitoring body height
         monitorBodyHeight();
-        $(document).ready(function(){
+        $(document).ready(function () {
             sendHeightToParent(initialHeight);
         })
 
-        setInterval(function(){
+        setInterval(function () {
             window.parent.postMessage({ 'bodyHeight': "Hello" });
         }, 1000)
+
     </script>
 
 </html>
