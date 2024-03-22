@@ -110,6 +110,7 @@ main{
 }
 .item{
     width: 33.33%;
+    cursor: pointer;
     padding: 16px;
 }
 

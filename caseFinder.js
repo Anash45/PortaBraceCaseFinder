@@ -7,6 +7,7 @@ window.addEventListener('message', function (event) {
         document.getElementById('caseFinderIframe').style.height = height + 'px';
     }else if (event.data.URL) {
         let url = event.data.URL;
+        console.log(url, "Parent");
         this.window.location = url;
     }
 });

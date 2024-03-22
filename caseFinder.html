@@ -104,7 +104,7 @@
                         var headers = lines[0].split(",");
                         var result = [];
 
-                        console.log(csvData);
+                        //console.log(csvData);
                         // Parse CSV data
                         for (var i = 1; i < lines.length; i++) {
                             var obj = {};
@@ -125,7 +125,7 @@
                             csvWidth = csvWidth / 2.54;
                         }
 
-                        console.log(units, csvLength, csvHeight, csvWidth);
+                        //console.log(units, csvLength, csvHeight, csvWidth);
                         let items = '';
                         // Filter rows based on dimensions
                         //<p>${row.Length} x ${row.Width} x ${row.Height}</p>
@@ -133,7 +133,7 @@
                         if (filteredRows.length > 0) {
                             filteredRows.forEach(function (row) {
                                 items += `<div class="item">
-                                    <a class="item-box" href="${row.URL}" target="_parent">
+                                    <a class="item-box" target="_parent" href="${row.URL}" onclick="navigateWindow('${row.URL}')">
                                         <h3 class="item-name">${row.SKU}</h3>
                                         <img src="${row.Image}" alt="Item Image" class="item-img">
                                     </a>
@@ -144,7 +144,6 @@
                         }
 
                         $('#items').html(items);
-                        console.log(filteredRows);
                         // Do something with filteredRows, like displaying them on the page
                     }
                 });
@@ -183,10 +182,12 @@
             sendHeightToParent(initialHeight);
         })
 
-        setInterval(function () {
-            window.parent.postMessage({ 'bodyHeight': "Hello" });
-        }, 1000)
-
+        
+        function navigateWindow(url){
+            event.preventDefault();
+            console.log(url, "Frame");
+            window.parent.postMessage({ 'URL': url });
+        }
     </script>
 
 </html>
