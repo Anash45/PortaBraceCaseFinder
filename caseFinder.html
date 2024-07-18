@@ -132,7 +132,7 @@
                         var filteredRows = filterRows(result, csvLength, csvWidth, csvHeight);
                         if (filteredRows.length > 0) {
                             filteredRows.forEach(function (row) {
-                                let image = (row.Image != null && row.Image != undefined) ? `<img src="${row.Image}" alt="Item Image" class="item-img">` : ``;
+                                let image = (row.Image != null && row.Image != undefined) ? `<img src="${row.Image}" alt="Item Image" loading="lazy" class="item-img">` : ``;
                                 items += `<div class="item">
                                     <a class="item-box" target="_parent" href="${row.URL}" onclick="navigateWindow('${row.URL}')">
                                         <h3 class="item-name">${row.Product}</h3>
