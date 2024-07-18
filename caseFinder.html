@@ -49,7 +49,7 @@
                         </form>
                     </div>
                     <div class="info-div">
-                        <img src="./img/Case-Finder-Dimensions.png" alt="Case Image">
+                        <img src="./img/Case-Finder-Dimensions-1.png" alt="Case Image">
                     </div>
                 </div>
                 <div class="items" id="items">
@@ -97,7 +97,7 @@
 
                 // Read CSV file
                 $.ajax({
-                    url: 'Dim-Search-with-Images.csv',
+                    url: 'Dim-Search-Updated-1.csv',
                     dataType: 'text',
                     success: function (csvData) {
                         var lines = csvData.split("\n");
@@ -132,10 +132,11 @@
                         var filteredRows = filterRows(result, csvLength, csvWidth, csvHeight);
                         if (filteredRows.length > 0) {
                             filteredRows.forEach(function (row) {
+                                let image = (row.Image != null && row.Image != undefined) ? `<img src="${row.Image}" alt="Item Image" class="item-img">` : ``;
                                 items += `<div class="item">
                                     <a class="item-box" target="_parent" href="${row.URL}" onclick="navigateWindow('${row.URL}')">
-                                        <h3 class="item-name">${row.SKU}</h3>
-                                        <img src="${row.Image}" alt="Item Image" class="item-img">
+                                        <h3 class="item-name">${row.Product}</h3>
+                                        ${image}
                                     </a>
                                 </div>`;
                             })
